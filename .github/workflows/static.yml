@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>موقع ترحيب</title>
+</head>
+<body>
+<h1>مرحبًا بك في موقعنا!</h1>
+<p>هلا أكوما</p>
+
+<p id="ipAddress">عنوان IP الخاص بالزائر:</p>
+<p id="osInfo">نظام التشغيل:</p>
+<p id="browserInfo">المتصفح:</p>
+<p id="screenInfo">دقة الشاشة:</p>
+<p id="languageInfo">اللغة:</p>
+<p id="deviceInfo">معلومات الجهاز:</p>
+<p id="locationInfo">الموقع الجغرافي:</p>
+<p id="ramInfo">الرام (بالجيجابايت):</p>
+<p id="storageInfo">المساحة التخزينية:</p>
+
+<script>
+    // Get visitor's IP address
+    fetch('https://api.ipify.org?format=json')
+        .then(response => response.json())
+        .then(data => {
+            const ipAddress = document.getElementById('ipAddress');
+            ipAddress.textContent += ' ' + data.ip;
+        })
+        .catch(error => console.error('حدث خطأ أثناء جلب عنوان IP:', error));
+
+    // Get visitor's operating system, browser, and screen resolution
+    const osInfo = document.getElementById('osInfo');
+    const browserInfo = document.getElementById('browserInfo');
+    const screenInfo = document.getElementById('screenInfo');
+    const languageInfo = document.getElementById('languageInfo');
+    const deviceInfo = document.getElementById('deviceInfo');
+    const locationInfo = document.getElementById('locationInfo');
+    const ramInfo = document.getElementById('ramInfo');
+    const storageInfo = document.getElementById('storageInfo');
+
+    osInfo.textContent += ' ' + navigator.platform;
+    browserInfo.textContent += ' ' + navigator.userAgent;
+    screenInfo.textContent += ' ' + screen.width + 'x' + screen.height;
+    languageInfo.textContent += ' ' + navigator.language;
+    deviceInfo.textContent += ' ' + navigator.vendor + ' ' + navigator.appVersion;
+
+    // Get device RAM
+    if (navigator.deviceMemory) {
+        ramInfo.textContent += ' ' + navigator.deviceMemory + 'GB';
+    } else {
+        ramInfo.textContent += ' لا يمكن الحصول على المعلومات';
+    }
+
+    // Get storage information (example using localStorage)
+    if (localStorage) {
+        const usedStorage = JSON.stringify(localStorage).length / 1024 / 1024; // in MB
+        const totalStorage = (1024 * 1024 * 5); // assuming 5MB storage limit for demo purposes
+        const freeStorage = totalStorage - usedStorage;
+
+        storageInfo.textContent += ` مساحة مستخدمة: ${usedStorage.toFixed(2)} MB, مساحة متاحة: ${freeStorage.toFixed(2)} MB`;
+    } else {
+        storageInfo.textContent += ' لا يمكن الحصول على المعلومات';
+    }
+
+    // Get visitor's location if available
+    fetch('https://ipapi.co/json/')
+        .then(response => response.json())
+        .then(data => {
+            locationInfo.textContent += ' ' + data.country_name + ', ' + data.region + ', ' + data.city;
+        })
+        .catch(error => console.error('حدث خطأ أثناء جلب معلومات الموقع الجغرافي:', error));
+</script>
+
+</body>
+</html>
